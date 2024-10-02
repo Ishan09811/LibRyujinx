@@ -28,7 +28,7 @@ jobs:
         env:
          ANDROID_KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
         run: |
-         echo "$ANDROID_KEYSTORE_B64" | base64 --decode > ${{ github.workspace }}/android/app/ks.jks
+         echo "$ANDROID_KEYSTORE_B64" | base64 --decode > ${{ github.workspace }}/RyujinxAndroid/app/ks.jks
 
       - name: Check isPr
         id: get_is_pr
