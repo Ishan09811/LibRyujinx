@@ -24,12 +24,6 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Decode and save keystore
-        env:
-         ANDROID_KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
-        run: |
-         echo "$ANDROID_KEYSTORE_B64" | base64 --decode > ${{ github.workspace }}/RyujinxAndroid/app/ks.jks
-
       - name: Check isPr
         id: get_is_pr
         run: |
