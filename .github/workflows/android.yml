@@ -1,0 +1,58 @@
+name: ryujinx-android-build
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:        
+  Android-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Decode and save keystore
+        env:
+         ANDROID_KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+        run: |
+         echo "$ANDROID_KEYSTORE_B64" | base64 --decode > ${{ github.workspace }}/android/app/ks.jks
+
+      - name: Check isPr
+        id: get_is_pr
+        run: |
+          is_pr=${{ github.event_name == 'pull_request' }}
+          echo "::set-output name=is_pr::$is_pr"
+      
+      - name: Build with Gradle
+        run: |
+          cd RyujinxAndroid/ 
+          chmod +x gradlew
+          ./gradlew assembleDebug
+          cd ../..
+        env:
+          ANDROID_KEYSTORE_FILE: ks.jks
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          GITHUB_TOKEN: ${{ secrets.BUILD }}
+          IS_PR: ${{ steps.get_is_pr.outputs.is_pr }}
+        
+
+      - name: Upload Android Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: notify-android
+          path: ./android/app/build/outputs/apk/debug/app-debug.apk
+  
