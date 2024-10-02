@@ -32,7 +32,7 @@ jobs:
       
       - name: Build with Gradle
         run: |
-          cd RyujinxAndroid/ 
+          cd src/RyujinxAndroid/ 
           chmod +x gradlew
           ./gradlew assembleDebug
           cd ../..
