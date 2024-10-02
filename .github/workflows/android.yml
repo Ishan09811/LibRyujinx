@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y zlib1g-dev gcc android-ndk
+          sudo apt-get install -y zlib1g-dev
 
       - name: Install GCC and Clang
         run: sudo apt-get install -y gcc g++ clang
