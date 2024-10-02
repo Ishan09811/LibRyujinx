@@ -29,6 +29,14 @@ jobs:
         run: |
           is_pr=${{ github.event_name == 'pull_request' }}
           echo "::set-output name=is_pr::$is_pr"
+
+      - name: Install dependencies
+        run: |
+           sudo apt-get update
+           sudo apt-get install -y liblog libdl libz libm libgcc
+
+      - name: Install GCC and Clang
+        run: sudo apt-get install -y gcc g++ clang
       
       - name: Build with Gradle
         run: |
