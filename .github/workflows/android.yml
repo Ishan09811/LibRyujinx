@@ -23,7 +23,7 @@ jobs:
         run: |
           wget https://dot.net/v1/dotnet-install.sh
           chmod +x dotnet-install.sh
-          ./dotnet-install.sh --version 9.0.100-preview.6.24328.19 --install-dir $HOME/dotnet
+          ./dotnet-install.sh --version 8.0.100 --install-dir $HOME/dotnet
           echo "$HOME/dotnet" >> $GITHUB_PATH
 
       - name: Restore .NET Dependencies
