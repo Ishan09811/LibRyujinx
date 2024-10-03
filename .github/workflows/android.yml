@@ -1,0 +1,46 @@
+name: Build Android
+
+on:
+  push:
+    branches:
+      - libryujinx_bionic
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Download .NET SDK 9.0
+        run: |
+          wget https://dot.net/v1/dotnet-install.sh
+          chmod +x dotnet-install.sh
+          ./dotnet-install.sh --version 9.0.100-preview.6.24328.19 --install-dir $HOME/dotnet
+          echo "$HOME/dotnet" >> $GITHUB_PATH
+
+      - name: Restore .NET Dependencies
+        run: dotnet restore
+
+      - name: Configure Android Build
+        run: |
+          echo "org.ryujinx.llvm.toolchain.path=${ANDROID_HOME}/ndk/25.1.8937393/toolchains/llvm/prebuilt/linux-x86_64/bin" >> src/RyujinxAndroid/gradle.properties
+
+      - name: Build the Android project
+        run: |
+          cd src/RyujinxAndroid
+          chmod +x gradlew
+          ./gradlew --stacktrace assembleDebug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug.apk
+          path: src/RyujinxAndroid/app/build/outputs/apk/debug/app-debug.apk
